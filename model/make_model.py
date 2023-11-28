@@ -117,7 +117,7 @@ class build_transformer(nn.Module):
 
     def load_param(self, trained_path):
         param_dict = torch.load(trained_path)
-        for i in param_dict:
+        for i in self.state_dict():
             self.state_dict()[i.replace('module.', '')].copy_(param_dict[i])
         print('Loading pretrained model from {}'.format(trained_path))
 
