@@ -28,7 +28,7 @@ def weights_init_classifier(m):
             nn.init.constant_(m.bias, 0.0)
 
 class build_transformer(nn.Module):
-    def __init__(self, num_classes, camera_num, view_num, cfg):
+    def __init__(self, num_classes, camera_num, view_num, cfg, clip_model_download_path = None):
         super(build_transformer, self).__init__()
         self.model_name = cfg.MODEL.NAME
         self.cos_layer = cfg.MODEL.COS_LAYER
@@ -60,7 +60,7 @@ class build_transformer(nn.Module):
         self.h_resolution = int((cfg.INPUT.SIZE_TRAIN[0]-16)//cfg.MODEL.STRIDE_SIZE[0] + 1)
         self.w_resolution = int((cfg.INPUT.SIZE_TRAIN[1]-16)//cfg.MODEL.STRIDE_SIZE[1] + 1)
         self.vision_stride_size = cfg.MODEL.STRIDE_SIZE[0]
-        clip_model = load_clip_to_cpu(self.model_name, self.h_resolution, self.w_resolution, self.vision_stride_size)
+        clip_model = load_clip_to_cpu(self.model_name, self.h_resolution, self.w_resolution, self.vision_stride_size, clip_model_download_path)
         clip_model.to("cuda")
 
         self.image_encoder = clip_model.visual
@@ -128,15 +128,18 @@ class build_transformer(nn.Module):
         print('Loading pretrained model for finetuning from {}'.format(model_path))
 
 
-def make_model(cfg, num_class, camera_num, view_num):
-    model = build_transformer(num_class, camera_num, view_num, cfg)
+def make_model(cfg, num_class, camera_num, view_num, clip_model_download_path=None):
+    model = build_transformer(num_class, camera_num, view_num, cfg, clip_model_download_path)
     return model
 
 
 from .clip import clip
-def load_clip_to_cpu(backbone_name, h_resolution, w_resolution, vision_stride_size):
+def load_clip_to_cpu(backbone_name, h_resolution, w_resolution, vision_stride_size, clip_model_download_path):
     url = clip._MODELS[backbone_name]
-    model_path = clip._download(url)
+    if clip_model_download_path is not None:
+        model_path = clip._download(url, root=clip_model_download_path)
+    else:
+        model_path = clip._download(url) 
 
     try:
         # loading JIT archive
