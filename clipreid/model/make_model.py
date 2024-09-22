@@ -28,7 +28,7 @@ def weights_init_classifier(m):
             nn.init.constant_(m.bias, 0.0)
 
 class build_transformer(nn.Module):
-    def __init__(self, num_classes, camera_num, view_num, cfg, clip_model_download_path = None):
+    def __init__(self, num_classes, camera_num, view_num, cfg, clip_model_download_path = None, device='cuda'):
         super(build_transformer, self).__init__()
         self.model_name = cfg.MODEL.NAME
         self.cos_layer = cfg.MODEL.COS_LAYER
@@ -61,7 +61,7 @@ class build_transformer(nn.Module):
         self.w_resolution = int((cfg.INPUT.SIZE_TRAIN[1]-16)//cfg.MODEL.STRIDE_SIZE[1] + 1)
         self.vision_stride_size = cfg.MODEL.STRIDE_SIZE[0]
         clip_model = load_clip_to_cpu(self.model_name, self.h_resolution, self.w_resolution, self.vision_stride_size, clip_model_download_path)
-        clip_model.to("cuda")
+        clip_model.to(device)
 
         self.image_encoder = clip_model.visual
 
@@ -128,8 +128,8 @@ class build_transformer(nn.Module):
         print('Loading pretrained model for finetuning from {}'.format(model_path))
 
 
-def make_model(cfg, num_class, camera_num, view_num, clip_model_download_path=None):
-    model = build_transformer(num_class, camera_num, view_num, cfg, clip_model_download_path)
+def make_model(cfg, num_class, camera_num, view_num, clip_model_download_path=None, device='cuda'):
+    model = build_transformer(num_class, camera_num, view_num, cfg, clip_model_download_path, device)
     return model
 
 
