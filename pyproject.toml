@@ -1,0 +1,27 @@
+[tool.poetry]
+authors = ["Siyuan Li <51215904049@stu.ecnu.edu.cn>", "Meheraj Hossain <meheraj.hossain@therapservices.net>", "Raheeb Hassan <raheeb.hassan@therapservices.net>"]
+description = "Official implementation for CLIP-ReID: Exploiting Vision-Language Model for Image Re-identification without Concrete Text Labels (AAAI 2023)"
+license = "LICENSE"
+name = "clipreid"
+packages = [{include = "clipreid"}]
+readme = "README.md"
+version = "0.0.0"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+torch = ">=1.8.0"
+torchvision = ">=0.9.0"
+torchaudio = ">=0.8.0"
+tqdm = "4.66.1"
+yacs = "0.1.8"
+ftfy = "6.1.1"
+regex = "2023.10.3"
+timm = "0.9.12"
+opencv-python = "^4.10.0.84"
+
+[tool.poetry-dynamic-versioning]
+enable = true
+
+[build-system]
+build-backend = "poetry_dynamic_versioning.backend"
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
