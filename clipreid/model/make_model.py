@@ -62,6 +62,8 @@ class build_transformer(nn.Module):
         self.vision_stride_size = cfg.MODEL.STRIDE_SIZE[0]
         clip_model = load_clip_to_cpu(self.model_name, self.h_resolution, self.w_resolution, self.vision_stride_size, clip_model_download_path)
         clip_model.to(device)
+        
+        self.device = device
 
         self.image_encoder = clip_model.visual
 
@@ -116,13 +118,13 @@ class build_transformer(nn.Module):
 
 
     def load_param(self, trained_path):
-        param_dict = torch.load(trained_path)
+        param_dict = torch.load(trained_path, map_location=self.device)
         for i in self.state_dict():
             self.state_dict()[i.replace('module.', '')].copy_(param_dict[i])
         print('Loading pretrained model from {}'.format(trained_path))
 
     def load_param_finetune(self, model_path):
-        param_dict = torch.load(model_path)
+        param_dict = torch.load(model_path, map_location=self.device)
         for i in param_dict:
             self.state_dict()[i].copy_(param_dict[i])
         print('Loading pretrained model for finetuning from {}'.format(model_path))
